@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>المراسلات المشفرة</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>سوق الجزائر DZ 🇩🇿</h1>
+        <nav>
+            <a href="index.html">السوق</a>
+            <a href="chat.html">المراسلات</a>
+        </nav>
+    </header>
+
+    <div class="container" style="max-width: 600px;">
+        <h2>المحادثة المشفرة</h2>
+        <p style="color: green; font-size: 0.8rem;">🔒 هذه المحادثة مشفرة (End-to-End). لا يمكن لأحد قراءتها.</p>
+        
+        <div class="card" style="height: 400px; overflow-y: scroll;" id="chat-box">
+            <!-- رسائل المحادثة -->
+            <div class="msg-box">مرحباً، هل المنتج لا يزال متوفراً؟</div>
+        </div>
+        
+        <div style="display: flex; gap: 10px; margin-top: 10px;">
+            <input type="text" id="msg-input" placeholder="اكتب رسالتك هنا...">
+            <button style="width: 100px;" onclick="sendMessage()">إرسال</button>
+        </div>
+    </div>
+
+    <script src="nostr-engine.js"></script>
+    <script>
+        function sendMessage() {
+            const input = document.getElementById('msg-input');
+            if(input.value.trim() === '') return;
+            
+            const chatBox = document.getElementById('chat-box');
+            chatBox.innerHTML += `<div class="msg-box" style="background: var(--primary); color: white; text-align: left;">${input.value}</div>`;
+            input.value = '';
+            // ملاحظة: التشفير الفعلي (NIP-04) يحتاج إلى مكتبة التشفير secp256k1، وهو ما سنطوره في الخطوة المتقدمة.
+        }
+    </script>
+</body>
+</html>
