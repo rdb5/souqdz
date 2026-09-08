@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>تسجيل الدخول · سوق دي زد</title>
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+<div class="auth-wrap">
+  <div class="auth-card">
+    <div class="auth-logo">
+      <div class="mark">🛍️</div>
+      <h1 style="margin:0;font-size:1.35rem;font-weight:900;color:var(--souk-green-dark)">سوق دي زد</h1>
+      <p style="margin:6px 0 0;font-size:.82rem;color:var(--ink-soft)">هويتك هي مفتاحك — لا حاجة لبريد إلكتروني أو كلمة سر</p>
+    </div>
+
+    <div class="auth-tabs">
+      <button id="tab-new" type="button">حساب جديد</button>
+      <button id="tab-existing" type="button">لدي حساب</button>
+    </div>
+
+    <!-- إنشاء حساب جديد -->
+    <div id="panel-new">
+      <p style="font-size:.82rem;color:var(--ink-soft);line-height:1.6;margin-bottom:14px;">
+        سننشئ لك زوج مفاتيح Nostr داخل متصفحك مباشرة. هذا هو حسابك بالكامل، ولا يمكن لأحد — ولا حتى نحن — استرجاعه إذا فقدته.
+      </p>
+      <button id="btn-generate" type="button" class="btn btn-primary btn-block">🔑 إنشاء مفاتيحي الآن</button>
+
+      <div id="generated-box" style="display:none;margin-top:16px;">
+        <div class="warn-box">⚠️ احفظ المفتاح الخاص (nsec) في مكان آمن الآن. لن يظهر لك مرة أخرى!</div>
+        <label style="font-size:.75rem;font-weight:700;">مفتاحك العام (npub) — يمكن مشاركته</label>
+        <div class="key-box" id="new-npub"></div>
+        <label style="font-size:.75rem;font-weight:700;">مفتاحك الخاص (nsec) — لا تشاركه أبدًا</label>
+        <div class="key-box" id="new-nsec"></div>
+
+        <label style="display:flex;align-items:center;gap:8px;font-size:.82rem;margin:14px 0;">
+          <input type="checkbox" id="confirm-saved-key" /> لقد حفظت مفتاحي الخاص في مكان آمن
+        </label>
+        <label style="display:flex;align-items:center;gap:8px;font-size:.82rem;margin-bottom:14px;">
+          <input type="checkbox" id="remember-new" checked /> تذكرني على هذا الجهاز
+        </label>
+        <button id="btn-confirm-new" class="btn btn-primary btn-block" disabled>الدخول إلى السوق 🚀</button>
+      </div>
+    </div>
+
+    <!-- الدخول بمفتاح موجود -->
+    <div id="panel-existing" style="display:none;">
+      <form id="form-existing">
+        <div class="field">
+          <label>المفتاح الخاص (nsec1... أو hex)</label>
+          <input type="password" id="input-nsec" placeholder="nsec1..." autocomplete="off" />
+          <small>مفتاحك يبقى في متصفحك فقط ولا يُرسل لأي خادم.</small>
+        </div>
+        <label style="display:flex;align-items:center;gap:8px;font-size:.82rem;margin-bottom:14px;">
+          <input type="checkbox" id="remember-existing" checked /> تذكرني على هذا الجهاز
+        </label>
+        <button type="submit" class="btn btn-primary btn-block">دخول</button>
+      </form>
+
+      <div style="text-align:center;margin:16px 0;color:var(--ink-soft);font-size:.8rem;">— أو —</div>
+      <button id="btn-nip07" type="button" class="btn btn-outline btn-block">🧩 دخول عبر إضافة المتصفح (Alby / nos2x)</button>
+    </div>
+
+    <p style="text-align:center;font-size:.72rem;color:var(--ink-soft);margin-top:20px;">
+      سوق دي زد لا يملك خوادم ولا قواعد بيانات — أنت تملك بياناتك بالكامل عبر بروتوكول Nostr المفتوح.
+    </p>
+  </div>
+</div>
+
+<script type="module">
+  import { initLoginPage } from './js/auth.js';
+  initLoginPage();
+</script>
+</body>
+</html>

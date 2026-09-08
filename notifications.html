@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>الإشعارات · سوق دي زد</title>
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+<div class="desktop-shell">
+  <div class="content">
+    <div class="page">
+      <div class="section-title">الإشعارات</div>
+      <div id="notif-list"></div>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+  import { requireAuth, renderShell, renderSidebarInto } from './js/auth.js';
+  import { initNotificationsPage, refreshMsgBadge } from './js/notifications.js';
+
+  const session = requireAuth();
+  if (session) {
+    renderShell({ activePage: 'notifications.html', title: 'الإشعارات' });
+    renderSidebarInto(document.querySelector('.desktop-shell'), 'notifications.html');
+    initNotificationsPage(session);
+    refreshMsgBadge(session.pubHex);
+  }
+</script>
+</body>
+</html>

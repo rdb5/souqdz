@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>الإعدادات · سوق دي زد</title>
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+<div class="desktop-shell">
+  <div class="content">
+    <div class="page">
+      <div class="section-title">الإعدادات</div>
+
+      <div class="card" style="margin-bottom:16px;">
+        <div style="font-weight:800;margin-bottom:10px;">🔑 مفاتيحي</div>
+        <label style="font-size:.75rem;font-weight:700;">المفتاح العام (npub)</label>
+        <div class="key-box" id="s-npub"></div>
+        <button id="btn-reveal" class="btn btn-outline btn-sm" style="margin-top:8px;">إظهار المفتاح الخاص</button>
+        <div id="s-priv-box" style="display:none;margin-top:10px;">
+          <div class="warn-box">لا تشارك هذا المفتاح مع أحد أبدًا!</div>
+          <div class="key-box" id="s-nsec"></div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:16px;">
+        <div class="switch-row"><span>تفعيل إشعارات المتصفح</span>
+          <label class="switch"><input type="checkbox" id="toggle-browser-notif" /><span class="slider"></span></label>
+        </div>
+        <div class="switch-row"><span>تذكرني على هذا الجهاز</span>
+          <label class="switch"><input type="checkbox" id="toggle-remember" checked /><span class="slider"></span></label>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:16px;">
+        <div style="font-weight:800;margin-bottom:10px;">📡 ريلايز Nostr المستخدمة</div>
+        <div id="relay-list"></div>
+        <div class="field" style="margin-top:12px;"><input id="new-relay" placeholder="wss://relay.example.com" /></div>
+        <button id="btn-add-relay" class="btn btn-ghost btn-block">إضافة ريلاي</button>
+      </div>
+
+      <button id="btn-logout" class="btn btn-danger btn-block">🚪 تسجيل الخروج</button>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+  import { requireAuth, renderShell, renderSidebarInto, logout } from './js/auth.js';
+  import { getRelays, setRelays } from './js/nostr-client.js';
+  import { refreshNotifBadge, refreshMsgBadge } from './js/notifications.js';
+  import { toast, store } from './js/utils.js';
+
+  const session = requireAuth();
+  if (session) {
+    renderShell({ activePage: 'settings.html', title: 'الإعدادات', showBack:true });
+    renderSidebarInto(document.querySelector('.desktop-shell'), 'settings.html');
+    refreshNotifBadge(session.pubHex);
+    refreshMsgBadge(session.pubHex);
+
+    document.querySelector('#s-npub').textContent = session.npub || session.pubHex;
+    document.querySelector('#btn-reveal').addEventListener('click', () => {
+      document.querySelector('#s-priv-box').style.display = 'block';
+      document.querySelector('#s-nsec').textContent = session.nsec || '(تم الدخول عبر إضافة المتصفح، لا مفتاح مخزّن هنا)';
+    });
+
+    document.querySelector('#toggle-browser-notif').checked = Notification?.permission === 'granted';
+    document.querySelector('#toggle-browser-notif').addEventListener('change', async (e) => {
+      if (e.target.checked) {
+        const perm = await Notification.requestPermission();
+        if (perm !== 'granted') { e.target.checked = false; toast('تم رفض الإذن من المتصفح', 'error'); }
+      }
+    });
+
+    function renderRelays() {
+      const relays = getRelays();
+      document.querySelector('#relay-list').innerHTML = relays.map(r => `
+        <div class="relay-item"><span><span class="dot on"></span>${r}</span>
+        <button data-r="${r}" class="btn-remove-relay" style="background:none;border:none;color:var(--danger)">حذف</button></div>
+      `).join('');
+      document.querySelectorAll('.btn-remove-relay').forEach(b => b.addEventListener('click', () => {
+        setRelays(getRelays().filter(r => r !== b.dataset.r));
+        renderRelays();
+      }));
+    }
+    renderRelays();
+
+    document.querySelector('#btn-add-relay').addEventListener('click', () => {
+      const input = document.querySelector('#new-relay');
+      const val = input.value.trim();
+      if (!val.startsWith('wss://')) return toast('يجب أن يبدأ الرابط بـ wss://', 'error');
+      const relays = getRelays();
+      if (!relays.includes(val)) setRelays([...relays, val]);
+      input.value = '';
+      renderRelays();
+      toast('تمت إضافة الريلاي', 'success');
+    });
+
+    document.querySelector('#btn-logout').addEventListener('click', () => {
+      if (confirm('هل تأكدت من حفظ مفتاحك الخاص؟ لن تستطيع استرجاع حسابك بدونه.')) logout();
+    });
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>بحث · سوق دي زد</title>
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+<div class="desktop-shell">
+  <div class="content">
+    <div class="page">
+      <div class="field">
+        <input type="search" id="search-input" placeholder="ابحث عن منتج، سيارة، خدمة..." style="width:100%;padding:14px 16px;border-radius:999px;border:1.5px solid var(--sand-deep);font-size:.95rem;" />
+      </div>
+      <div class="field-row">
+        <select id="filter-cat" class="field" style="padding:10px;border-radius:10px;border:1.5px solid var(--sand-deep);"></select>
+        <select id="filter-wilaya" class="field" style="padding:10px;border-radius:10px;border:1.5px solid var(--sand-deep);"></select>
+      </div>
+      <div class="grid" id="search-grid"></div>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+  import { requireAuth, renderShell, renderSidebarInto } from './js/auth.js';
+  import { initSearchPage } from './js/marketplace.js';
+  import { refreshNotifBadge, refreshMsgBadge } from './js/notifications.js';
+
+  const session = requireAuth();
+  if (session) {
+    renderShell({ activePage: 'search.html', title: 'البحث', showBack:true });
+    renderSidebarInto(document.querySelector('.desktop-shell'), 'search.html');
+    initSearchPage();
+    refreshNotifBadge(session.pubHex);
+    refreshMsgBadge(session.pubHex);
+  }
+</script>
+</body>
+</html>

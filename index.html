@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>سوق دي زد</title>
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+<div class="desktop-shell">
+  <div class="content">
+    <div class="page">
+      <div class="chip-row" id="home-chips"></div>
+
+      <div class="card" style="background:linear-gradient(120deg, var(--souk-green), var(--souk-green-dark)); color:var(--white); margin-bottom:22px; border:none;">
+        <div style="font-size:1.3rem;font-weight:900;margin-bottom:6px;">سوق دي زد 🇩🇿</div>
+        <div style="font-size:.88rem;opacity:.9;line-height:1.6;">
+          أول سوق جزائري رقمي مبني بالكامل على شبكة Nostr اللامركزية — بدون خوادم، بدون قواعد بيانات،
+          ملكية كاملة لبياناتك، ومحادثات مشفرة بينك وبين البائعين.
+        </div>
+      </div>
+
+      <div class="section-title">أحدث الإعلانات <a class="more" href="categories.html">عرض الكل ←</a></div>
+      <div class="grid" id="home-grid"></div>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+  import { requireAuth, renderShell, renderSidebarInto } from './js/auth.js';
+  import { initHomePage } from './js/marketplace.js';
+  import { refreshNotifBadge, refreshMsgBadge, enableLiveBrowserNotifications } from './js/notifications.js';
+
+  const session = requireAuth();
+  if (session) {
+    renderShell({ activePage: 'index.html', title: 'الرئيسية' });
+    renderSidebarInto(document.querySelector('.desktop-shell'), 'index.html');
+    initHomePage();
+    refreshNotifBadge(session.pubHex);
+    refreshMsgBadge(session.pubHex);
+    enableLiveBrowserNotifications(session.pubHex);
+  }
+</script>
+</body>
+</html>

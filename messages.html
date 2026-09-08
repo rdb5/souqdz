@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>الرسائل · سوق دي زد</title>
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+<div class="desktop-shell">
+  <div class="content">
+    <div class="page">
+      <div class="section-title">الرسائل المشفرة 🔒</div>
+      <div id="threads-list"></div>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+  import { requireAuth, renderShell, renderSidebarInto } from './js/auth.js';
+  import { initMessagesListPage } from './js/messages.js';
+  import { refreshNotifBadge, refreshMsgBadge } from './js/notifications.js';
+  import { store } from './js/utils.js';
+
+  const session = requireAuth();
+  if (session) {
+    renderShell({ activePage: 'messages.html', title: 'الرسائل' });
+    renderSidebarInto(document.querySelector('.desktop-shell'), 'messages.html');
+    initMessagesListPage(session);
+    refreshNotifBadge(session.pubHex);
+    store.set('souq_msgs_last_seen', Math.floor(Date.now()/1000));
+    refreshMsgBadge(session.pubHex);
+  }
+</script>
+</body>
+</html>

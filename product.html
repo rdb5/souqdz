@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>تفاصيل الإعلان · سوق دي زد</title>
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+<div class="desktop-shell">
+  <div class="content">
+    <div class="page" id="product-box"></div>
+  </div>
+</div>
+
+<script type="module">
+  import { requireAuth, renderShell, renderSidebarInto } from './js/auth.js';
+  import { initProductPage } from './js/marketplace.js';
+  import { addToCart } from './js/cart.js';
+  import { refreshNotifBadge, refreshMsgBadge } from './js/notifications.js';
+
+  const session = requireAuth();
+  if (session) {
+    renderShell({ activePage: '', title: 'تفاصيل الإعلان', showBack: true });
+    renderSidebarInto(document.querySelector('.desktop-shell'), '');
+    initProductPage(session);
+    refreshNotifBadge(session.pubHex);
+    refreshMsgBadge(session.pubHex);
+    window.addEventListener('souq:add-to-cart', (e) => addToCart(session.pubHex, e.detail));
+  }
+</script>
+</body>
+</html>

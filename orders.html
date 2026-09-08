@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>طلباتي · سوق دي زد</title>
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+<div class="desktop-shell">
+  <div class="content">
+    <div class="page">
+      <div class="section-title">طلباتي</div>
+      <div class="tabs-row">
+        <button class="active" data-tab="buying">مشترياتي</button>
+        <button data-tab="selling">طلبات واردة (كبائع)</button>
+      </div>
+      <div id="orders-buying"></div>
+      <div id="orders-selling" style="display:none;"></div>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+  import { requireAuth, renderShell, renderSidebarInto } from './js/auth.js';
+  import { initOrdersPage } from './js/cart.js';
+  import { refreshNotifBadge, refreshMsgBadge } from './js/notifications.js';
+  import { qsa } from './js/utils.js';
+
+  const session = requireAuth();
+  if (session) {
+    renderShell({ activePage: 'orders.html', title: 'طلباتي' });
+    renderSidebarInto(document.querySelector('.desktop-shell'), 'orders.html');
+    initOrdersPage(session);
+    refreshNotifBadge(session.pubHex);
+    refreshMsgBadge(session.pubHex);
+
+    qsa('.tabs-row button').forEach(btn => btn.addEventListener('click', () => {
+      qsa('.tabs-row button').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      document.querySelector('#orders-buying').style.display = btn.dataset.tab === 'buying' ? 'block' : 'none';
+      document.querySelector('#orders-selling').style.display = btn.dataset.tab === 'selling' ? 'block' : 'none';
+    }));
+  }
+</script>
+</body>
+</html>

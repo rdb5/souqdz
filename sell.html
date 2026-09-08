@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>إضافة إعلان · سوق دي زد</title>
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+<div class="desktop-shell">
+  <div class="content">
+    <div class="page">
+      <h1 id="sell-title-h1" style="font-size:1.2rem;margin-bottom:16px;">إعلان جديد</h1>
+      <form id="sell-form" class="card">
+        <div class="field">
+          <label>عنوان الإعلان</label>
+          <input id="f-title" required placeholder="مثال: آيفون 13 برو حالة ممتازة" />
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>السعر (د.ج)</label>
+            <input id="f-price" type="number" min="0" required placeholder="0" />
+          </div>
+          <div class="field">
+            <label>الحالة</label>
+            <select id="f-condition">
+              <option value="new">جديد</option>
+              <option value="used">مستعمل</option>
+            </select>
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>التصنيف</label>
+            <select id="f-category"></select>
+          </div>
+          <div class="field">
+            <label>الولاية</label>
+            <select id="f-wilaya"></select>
+          </div>
+        </div>
+        <div class="field">
+          <label>الوصف</label>
+          <textarea id="f-description" rows="5" placeholder="اكتب تفاصيل إضافية عن المنتج..."></textarea>
+        </div>
+        <div class="field">
+          <label>الصور (تُخزَّن كروابط ضمن حدث Nostr نفسه)</label>
+          <input id="f-images" type="file" accept="image/*" multiple />
+          <small>ملاحظة: الصور تُرفق مباشرة داخل الإعلان بدون أي خادم تخزين خارجي. يفضّل ألا تتجاوز كل صورة 300kb.</small>
+          <div id="image-preview" style="display:flex;gap:8px;margin-top:10px;overflow-x:auto;"></div>
+        </div>
+        <button type="submit" id="btn-publish" class="btn btn-primary btn-block">نشر الإعلان 🚀</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+  import { requireAuth, renderShell, renderSidebarInto } from './js/auth.js';
+  import { initSellPage } from './js/marketplace.js';
+  import { refreshNotifBadge, refreshMsgBadge } from './js/notifications.js';
+
+  const session = requireAuth();
+  if (session) {
+    renderShell({ activePage: 'sell.html', title: 'إضافة إعلان', showBack:true });
+    renderSidebarInto(document.querySelector('.desktop-shell'), 'sell.html');
+    initSellPage(session);
+    refreshNotifBadge(session.pubHex);
+    refreshMsgBadge(session.pubHex);
+  }
+</script>
+</body>
+</html>

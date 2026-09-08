@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>السلة · سوق دي زد</title>
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+<div class="desktop-shell">
+  <div class="content">
+    <div class="page">
+      <div class="section-title">سلة التسوق</div>
+      <div id="cart-list"></div>
+
+      <div id="cart-summary" class="card" style="display:none;margin-top:16px;">
+        <div class="summary-row total"><span>الإجمالي</span><span class="num" id="cart-total">0 د.ج</span></div>
+
+        <div class="field" style="margin-top:16px;">
+          <label>رقم الهاتف للتواصل</label>
+          <input id="checkout-phone" placeholder="0555 xx xx xx" />
+        </div>
+        <div class="field">
+          <label>الولاية</label>
+          <input id="checkout-wilaya" placeholder="مثال: الجزائر العاصمة" />
+        </div>
+        <div class="field">
+          <label>العنوان الكامل للتوصيل</label>
+          <textarea id="checkout-address" rows="2" placeholder="الحي، الشارع، أقرب علامة..."></textarea>
+        </div>
+        <small style="display:block;margin-bottom:14px;color:var(--ink-soft);">
+          🔒 هذه المعلومات تُرسل مشفّرة مباشرة للبائع فقط ولا تُخزَّن في أي قاعدة بيانات.
+        </small>
+        <button id="btn-checkout" class="btn btn-primary btn-block">تأكيد الطلب</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+  import { requireAuth, renderShell, renderSidebarInto } from './js/auth.js';
+  import { initCartPage } from './js/cart.js';
+  import { refreshNotifBadge, refreshMsgBadge } from './js/notifications.js';
+
+  const session = requireAuth();
+  if (session) {
+    renderShell({ activePage: 'cart.html', title: 'السلة', showBack:true });
+    renderSidebarInto(document.querySelector('.desktop-shell'), 'cart.html');
+    initCartPage(session);
+    refreshNotifBadge(session.pubHex);
+    refreshMsgBadge(session.pubHex);
+  }
+</script>
+</body>
+</html>

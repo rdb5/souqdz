@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>المحفظة · سوق دي زد</title>
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+<div class="desktop-shell">
+  <div class="content">
+    <div class="page">
+      <div class="section-title">المحفظة</div>
+
+      <div class="card" style="margin-bottom:16px;background:linear-gradient(120deg,#8a6c1f,#C9A961);color:#2b220a;border:none;">
+        <div style="font-weight:900;">⚡ الدفع عبر Lightning Network</div>
+        <p style="font-size:.82rem;line-height:1.7;margin:8px 0 0;">
+          بما أن سوق دي زد بدون خوادم أو بنوك وسيطة، أسرع وأرخص طريقة دفع مباشرة بين المشتري والبائع
+          هي شبكة Lightning (بيتكوين). لا محفظة "مركزية" هنا — أنت تستعمل تطبيق محفظة Lightning خاص بك.
+        </p>
+      </div>
+
+      <div class="card" style="margin-bottom:16px;">
+        <div style="font-weight:800;margin-bottom:8px;">📥 استلام الدفعات كبائع</div>
+        <p style="font-size:.85rem;color:var(--ink-soft);">أضف عنوان Lightning الخاص بك (مثل <span class="num">name@wallet.com</span>) من صفحة
+          <a href="profile.html" style="color:var(--souk-green);font-weight:700;">الملف الشخصي</a> ليظهر للمشترين تلقائيًا.</p>
+        <div class="num" id="my-lud16" style="margin-top:10px;font-weight:800;color:var(--souk-green-dark);"></div>
+      </div>
+
+      <div class="card">
+        <div style="font-weight:800;margin-bottom:10px;">📤 دفع سريع لبائع</div>
+        <div class="field"><label>عنوان Lightning للبائع</label><input id="pay-lud16" placeholder="seller@wallet.com" /></div>
+        <div class="field"><label>المبلغ (ساتوشي)</label><input id="pay-amount" type="number" placeholder="1000" /></div>
+        <button id="btn-pay" class="btn btn-primary btn-block">فتح في محفظة Lightning</button>
+        <small style="display:block;margin-top:10px;">يعمل هذا مع أغلب محافظ Lightning (Wallet of Satoshi، Phoenix، Blue Wallet...) المُثبتة على جهازك.</small>
+      </div>
+
+      <div class="card" style="margin-top:16px;">
+        <div style="font-weight:800;margin-bottom:8px;">🔑 نسخة احتياطية من مفاتيحك</div>
+        <p style="font-size:.82rem;color:var(--ink-soft);">مفتاحك هو محفظتك وهويتك معًا. احتفظ بنسخة من الـ nsec في مكان آمن دائمًا.</p>
+        <a href="settings.html" class="btn btn-outline btn-block" style="margin-top:8px;">عرض مفاتيحي من الإعدادات</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+  import { requireAuth, renderShell, renderSidebarInto } from './js/auth.js';
+  import { fetchProfile } from './js/nostr-client.js';
+  import { refreshNotifBadge, refreshMsgBadge } from './js/notifications.js';
+  import { toast } from './js/utils.js';
+
+  const session = requireAuth();
+  if (session) {
+    renderShell({ activePage: 'wallet.html', title: 'المحفظة', showBack:true });
+    renderSidebarInto(document.querySelector('.desktop-shell'), 'wallet.html');
+    refreshNotifBadge(session.pubHex);
+    refreshMsgBadge(session.pubHex);
+
+    fetchProfile(session.pubHex).then(p => {
+      document.querySelector('#my-lud16').textContent = p?.lud16 ? '✅ ' + p.lud16 : '⚠️ لم تُضِف عنوان Lightning بعد';
+    });
+
+    document.querySelector('#btn-pay').addEventListener('click', () => {
+      const addr = document.querySelector('#pay-lud16').value.trim();
+      const amount = document.querySelector('#pay-amount').value.trim();
+      if (!addr.includes('@')) return toast('أدخل عنوان Lightning صالح', 'error');
+      const uri = `lightning:${addr}${amount ? `?amount=${amount}` : ''}`;
+      window.location.href = uri;
+      toast('تم فتح محفظتك... إن لم يحدث شيء، انسخ العنوان يدويًا في تطبيق محفظتك', 'info', 5000);
+    });
+  }
+</script>
+</body>
+</html>

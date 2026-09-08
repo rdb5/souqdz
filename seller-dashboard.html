@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>لوحة البائع · سوق دي زد</title>
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+<div class="desktop-shell">
+  <div class="content">
+    <div class="page">
+      <div class="card" style="margin-bottom:16px;display:flex;align-items:center;gap:14px;">
+        <div class="avatar" style="width:60px;height:60px;font-size:1.4rem;">🏪</div>
+        <div style="flex:1;">
+          <div id="dash-name" style="font-weight:900;font-size:1.1rem;"></div>
+          <div id="dash-about" style="font-size:.8rem;color:var(--ink-soft);"></div>
+        </div>
+        <a id="dash-msg-btn" href="#" class="btn btn-outline btn-sm" style="display:none;">راسل</a>
+      </div>
+
+      <div class="stat-grid" style="margin-bottom:18px;">
+        <div class="stat-card"><div class="n" id="stat-active">0</div><div class="l">إعلانات نشطة</div></div>
+        <div class="stat-card"><div class="n" id="stat-total">0</div><div class="l">إجمالي الإعلانات</div></div>
+        <div class="stat-card"><div class="n num" id="stat-value">0</div><div class="l">القيمة الإجمالية</div></div>
+      </div>
+
+      <div id="dash-actions" style="display:flex;gap:10px;margin-bottom:18px;">
+        <a href="sell.html" class="btn btn-primary">➕ إعلان جديد</a>
+        <a href="orders.html" class="btn btn-outline">📦 الطلبات الواردة</a>
+      </div>
+
+      <div class="section-title">إعلانات هذا الحساب</div>
+      <div class="grid" id="dash-grid"></div>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+  import { requireAuth, renderShell, renderSidebarInto } from './js/auth.js';
+  import { initSellerDashboard } from './js/marketplace.js';
+  import { refreshNotifBadge, refreshMsgBadge } from './js/notifications.js';
+
+  const session = requireAuth();
+  if (session) {
+    renderShell({ activePage: 'seller-dashboard.html', title: 'لوحة البائع', showBack:true });
+    renderSidebarInto(document.querySelector('.desktop-shell'), 'seller-dashboard.html');
+    initSellerDashboard(session);
+    refreshNotifBadge(session.pubHex);
+    refreshMsgBadge(session.pubHex);
+  }
+</script>
+</body>
+</html>
